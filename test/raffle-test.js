@@ -13,23 +13,7 @@ describe("RAFFLE CONTRACT", function() {
     before(async function() {
         [owner, addr1, addr2] = await ethers.getSigners();
 
-        const Raffle = await ethers.getContractFactory("Raffle");
-        raffle = await Raffle.deploy();
-        await raffle.deployed();
-
-        try {
-            const tokenAddress = await raffle._linkToken
-            console.log("CHAINLINK TOKEN ADDRESS: ", tokenAddress)
-            // const token = await LinkTokenInterface.at(tokenAddress)
-            // console.log("FUNDING CONTRACT: ", bloodz.address)
-            // const tx = await token.transfer(bloodz.address, payment)
-            // callback(tx.tx)
-        } 
-        catch (err) {
-            console.log(err)
-            callback(err);
-        }
-    
+        raffle = await ethers.getContractAt("Raffle", "0x0D7716aE1534547820e7eFBcC7BD25B5dCC6a452")
     });
 
     it("RETURN CONTRACT STATUS", async function() {

@@ -6,6 +6,7 @@ import "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
 import '@chainlink/contracts/src/v0.8/VRFConsumerBase.sol';
 
 contract Raffle is Ownable, VRFConsumerBase {
+    
     uint256 public s_entranceFee = 10 gwei;
     address public s_recentWinner;
     address payable[] public s_players;
@@ -17,7 +18,6 @@ contract Raffle is Ownable, VRFConsumerBase {
 
     bytes32 internal keyHash;
     uint256 internal chainlinkFee;
-
 
     constructor(address _vrfCoordinator, address _linkToken, bytes32 _keyHash) 
     VRFConsumerBase(_vrfCoordinator, _linkToken) {
@@ -32,13 +32,11 @@ contract Raffle is Ownable, VRFConsumerBase {
         //limit number of players?
     }
 
-
     function closeRound() public onlyOwner() {
         s_state = State.Calculating;
         require(LINK.balanceOf(address(this)) >= chainlinkFee, "NOT ENOUGH LINK");
         requestRandomness(keyHash, chainlinkFee);
     }
-
 
     function fulfillRandomness(bytes32, uint256 ramdomness) internal override onlyOwner() {
         uint256 randomWinner = ramdomness % s_players.length;
