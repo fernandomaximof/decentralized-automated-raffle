@@ -15,14 +15,14 @@ contract Raffle is Ownable, VRFConsumerBase {
     }
     State public s_state;
 
-    //https://docs.chain.link/docs/vrf-contracts/
-    address _linkToken = 0x01BE23585060835E02B77ef475b0Cc51aA1e0709;
-    address _vrfCoordinator = 0x6168499c0cFfCaCD319c818142124B7A15E857ab;
-    bytes32 _keyHash = 0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc;
-    uint256 _chainlinkFee = 0.25 * 10 ** 18; //0.25 LINK
+    bytes32 internal keyHash;
+    uint256 internal chainlinkFee;
 
 
-    constructor() VRFConsumerBase(_vrfCoordinator, _linkToken) {
+    constructor(address _vrfCoordinator, address _linkToken, bytes32 _keyHash) 
+    VRFConsumerBase(_vrfCoordinator, _linkToken) {
+        keyHash = _keyHash;
+        chainlinkFee = 0.25 * 10 ** 18;
     }
 
     function enterRaffle() public payable {
@@ -33,10 +33,10 @@ contract Raffle is Ownable, VRFConsumerBase {
     }
 
 
-    function closeRound() public {
+    function closeRound() public onlyOwner() {
         s_state = State.Calculating;
-        require(LINK.balanceOf(address(this)) >= _chainlinkFee, "NOT ENOUGH LINK");
-        requestRandomness(_keyHash, _chainlinkFee);
+        require(LINK.balanceOf(address(this)) >= chainlinkFee, "NOT ENOUGH LINK");
+        requestRandomness(keyHash, chainlinkFee);
     }
 
 
