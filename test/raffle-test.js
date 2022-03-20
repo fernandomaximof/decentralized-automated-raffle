@@ -17,7 +17,6 @@ describe("RAFFLE CONTRACT", function() {
     
     });
 
-    
     it("ADDRESS 1 ENTER RAFFLE", async function() {
         await raffle.connect(addr1).enterRaffle({value: raffleFee});
     });
@@ -35,9 +34,4 @@ describe("RAFFLE CONTRACT", function() {
         status = await raffle.contractStatus()
         console.log('BALANCE:', BigInt(status[0]), 'NUMBER OF PLAYERS:', BigInt(status[1]))
     });
-
-    // it('SHOULD RETURN CORRECT OWNER BALANCE', async function () { 
-    //     expect(BigInt(await bznft.balanceOf(accounts[0])).toString()).to.equal("0");    
-    // });
-
 });
