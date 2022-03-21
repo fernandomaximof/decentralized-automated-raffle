@@ -7,6 +7,8 @@ require("@nomiclabs/hardhat-ethers");
 require("@nomiclabs/hardhat-etherscan");
 require("@nomiclabs/hardhat-web3");
 require("@appliedblockchain/chainlink-plugins-fund-link");
+require("./tasks/balance");
+require("./tasks/accounts");
 
 const { ALCHEMY_KEY, ACCOUNT_PRIVATE_KEY, ETHERSCAN_API_KEY } = process.env;
 

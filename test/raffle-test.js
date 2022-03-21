@@ -8,8 +8,6 @@ describe("RAFFLE CONTRACT", function() {
     var addr2;
     const raffleFee = web3.utils.toWei("10", "Gwei");
 
-    const payment = '1000000000000000000'
-
     before(async function() {
         [owner, addr1, addr2] = await ethers.getSigners();
 
