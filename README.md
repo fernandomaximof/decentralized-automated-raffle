@@ -6,6 +6,9 @@
 ### Contract LINK Funding:
 ```npx hardhat fund-link --contract {contract address} --network rinkeby```
 
+### Etherscan Verify:
+```npx hardhat verify --constructor-args scripts/arguments.js --network rinkeby 0xB69d681284e9fD62308af4fA7878A5E9987A684A```
+
 ### List of Accounts:
 ```npx hardhat accounts --network rinkeby```
 
