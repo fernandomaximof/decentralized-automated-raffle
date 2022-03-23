@@ -2,11 +2,15 @@
 pragma solidity ^0.8.0;
 
 import '@openzeppelin/contracts/access/Ownable.sol';
+
 import "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
 import '@chainlink/contracts/src/v0.8/VRFConsumerBase.sol';
 
-contract Raffle is Ownable, VRFConsumerBase {
+import '@chainlink/contracts/src/v0.8/interfaces/KeeperCompatibleInterface.sol';
+
+contract Raffle is Ownable, VRFConsumerBase, KeeperCompatibleInterface {
     
+    uint256 public s_lastUpkeep;
     uint256 public s_entranceFee = 10 gwei;
     address public s_recentWinner;
     address payable[] public s_players;
@@ -32,7 +36,15 @@ contract Raffle is Ownable, VRFConsumerBase {
         //limit number of players?
     }
 
-    function closeRound() public onlyOwner() {
+    function checkUpkeep(bytes calldata /*checkData*/) public view override returns(bool upkeepNeeded, bytes memory performData) {
+        bool hasLink = LINK.balanceOf(address(this)) >= chainlinkFee;
+        bool isOpen = s_state == State.Open;
+        bool isTime = (block.timestamp - s_lastUpkeep) > 1 hours;
+        bool enoughPlayers = s_players.length > 1;
+        upkeepNeeded = hasLink && isOpen && isTime && enoughPlayers;
+    }
+
+    function performUpkeep(bytes calldata /*performData*/) external override onlyOwner() {
         s_state = State.Calculating;
         require(LINK.balanceOf(address(this)) >= chainlinkFee, "NOT ENOUGH LINK");
         requestRandomness(keyHash, chainlinkFee);
@@ -46,6 +58,7 @@ contract Raffle is Ownable, VRFConsumerBase {
         require(success, "TRANSFER TO WINNER FAILED");
         delete s_players;
         s_state = State.Open;
+        s_lastUpkeep = block.timestamp;
     }
 
     function contractStatus() public view returns(uint256, uint256) {
